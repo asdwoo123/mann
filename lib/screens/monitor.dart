@@ -22,6 +22,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
   String _selectBranchOffice = '';
   String _selectProjectName = '';
   List<Station> _stations = [];
+  List<IO.Socket> _sockets = [];
 
   void _updateStationConnection(Station station, bool isConnected) {
     if (!mounted) return;
@@ -30,14 +31,17 @@ class _MonitorScreenState extends State<MonitorScreen> {
     });
   }
 
-  void _connectSocket(SocketsPocket socketsPocket, Station station) {
+  Future<void> _connectSocket(/*SocketsPocket socketsPocket, */Station station) async {
     IO.Socket socket = IO.io(
         station.connectIp,
         IO.OptionBuilder()
             .setTransports(['websocket'])
+        .disableAutoConnect()
             .build());
 
-    socketsPocket.addSocket(socket);
+    socket.connect();
+    /*socketsPocket.addSocket(socket);*/
+    _sockets.add(socket);
     socket.onConnect((data) {
       _updateStationConnection(station, true);
     });
@@ -62,12 +66,12 @@ class _MonitorScreenState extends State<MonitorScreen> {
       _stations = [];
     });
 
-    SocketsPocket socketsPocket = SocketsPocket();
+    /*SocketsPocket socketsPocket = SocketsPocket();
     List<IO.Socket> sockets = socketsPocket.sockets;
     for (var socket in sockets) {
       socket.disconnect();
     }
-    sockets.clear();
+    sockets.clear();*/
 
     List<dynamic> stations = await getStationList();
 
@@ -92,7 +96,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
         _stations.add(station);
       });
 
-      _connectSocket(socketsPocket, station);
+      await _connectSocket(/*socketsPocket, */station);
     }
   }
 
@@ -105,6 +109,15 @@ class _MonitorScreenState extends State<MonitorScreen> {
   void initState() {
     _getStationList();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    for (var socket in _sockets) {
+      socket.disconnect();
+    }
+
+    super.dispose();
   }
 
   @override

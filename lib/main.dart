@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mann/screens/home.dart';
+import 'package:mann/screens/intro.dart';
 import 'package:mann/screens/monitor.dart';
 import 'package:mann/screens/project.dart';
 
@@ -78,13 +79,14 @@ class _AppState extends State<App> {
         useMaterial3: useMaterial3,
         brightness: Brightness.dark,
       ),
-      home: HomeScreen(
+      home: /*HomeScreen(
         useLightMode: useLightMode,
         useMaterial3: useMaterial3,
         colorSelected: colorSelected,
         handleBrightnessChange: handleBrightnessChange,
         handleColorSelect: handleColorSelect,
-      ),
+      ),*/
+      const IntroScreen()
     );
   }
 }

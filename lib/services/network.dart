@@ -24,8 +24,8 @@ int findCategoryIndex(List<dynamic> categories, dynamic current) {
 }
 
 Future<List<dynamic>> getStationList() async {
-  http.Response response = await http.get(Uri.parse('$host?search=MANN'));
-  return jsonDecode(response.body);
+  http.Response response = await http.get(Uri.parse('$host/findStations/$company'));
+  return jsonDecode(response.body)['stations'];
 }
 
 Future<Station> getStation(station) async {

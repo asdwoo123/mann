@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 const String host = 'http://seojuneng.ddns.net';
+const String company = 'MANN';
 const double narrowScreenWidthThreshold = 450;
 
 const double mediumWidthBreakpoint = 1000;

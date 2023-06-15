@@ -2,13 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:mann/models/settings.dart';
-import 'package:mann/models/station.dart';
 import 'package:mann/widgets/custom_dropdown.dart';
 import 'package:mann/widgets/custom_roundbutton.dart';
 import 'package:http/http.dart' as http;
 import 'package:mann/widgets/custom_settingitem.dart';
 import '../services/network.dart';
 import '../theme.dart';
+import 'package:mann/constants.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({Key? key}) : super(key: key);
@@ -52,7 +52,7 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   void _connectStation() async {
-    var url = 'http://seojuneng.ddns.net/setting?id=$_uuid';
+    var url = '$host/setting?id=$_uuid';
     var res = await http.read(Uri.parse(url));
     var parsed = json.decode(res);
 
