@@ -39,13 +39,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   void _getStationList() async {
     List<dynamic> stations = await getStationList();
-    List<String> branchOffices = dataExtract(stations, 'branchOffice');
+    List<String> branchOffices = extractDataList(stations, 'branchOffice');
     stations = searchStations(stations, 'branchOffice',
         branchOffices[findCategoryIndex(branchOffices, _selectBranchOffice)]);
-    List<String> projectNames = dataExtract(stations, 'projectName');
+    List<String> projectNames = extractDataList(stations, 'projectName');
     stations = searchStations(stations, 'projectName',
         projectNames[findCategoryIndex(projectNames, _selectProjectName)]);
-    List<String> stationNames = dataExtract(stations, 'stationName');
+    List<String> stationNames = extractDataList(stations, 'stationName');
     stations = searchStations(stations, 'stationName',
         stationNames[findCategoryIndex(stationNames, _selectStationName)]);
 

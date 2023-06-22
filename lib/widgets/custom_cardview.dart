@@ -48,21 +48,19 @@ class CustomCardView extends StatelessWidget {
                       ),
                       side: BorderSide(color: primaryBlue)),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 (station.isRemote)
                     ? ElevatedButton(
                   onPressed: () {},
-                  child: Text('Remote'),
                   style: ElevatedButton.styleFrom(
-                    primary: primaryBlue,
-                    fixedSize: Size(90, 40),
                     shape: RoundedRectangleBorder(
                       borderRadius:
                       BorderRadius.circular(12),
                     ),
                   ),
+                  child: const Text('Remote'),
                 )
                     : Container(),
               ],

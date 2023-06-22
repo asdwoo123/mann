@@ -279,7 +279,7 @@ class Settings {
       pantilt: PantiltSettings.fromJson(json['pantilt']),
       remote: RemoteSettings.fromJson(json['remote']),
       save: SaveSettings.fromJson(json['save']),
-      node: List<Node>.from(json['node'].map((x) => Node.fromJson(x))),
+      node: List<Node>.from(json['nodeInfo'].map((x) => Node.fromJson(x))),
     );
     settings.projectController.text = settings.projectName;
     settings.stationController.text = settings.stationName;

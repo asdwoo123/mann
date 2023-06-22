@@ -25,6 +25,7 @@ class _IntroScreenState extends State<IntroScreen> {
     }
 
     String url = '$host/user';
+    print(url);
     http.Response response = await http.post(
         Uri.parse(url),
         headers: <String, String>{

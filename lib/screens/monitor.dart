@@ -1,8 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:mann/services/network.dart';
-import 'package:mann/services/socket_poket.dart';
 import 'package:mann/widgets/custom_cardview.dart';
 import 'package:mann/widgets/custom_dropdown.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -31,7 +28,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
     });
   }
 
-  Future<void> _connectSocket(/*SocketsPocket socketsPocket, */Station station) async {
+  Future<void> _connectSocket(Station station) async {
     IO.Socket socket = IO.io(
         station.connectIp,
         IO.OptionBuilder()
@@ -40,7 +37,6 @@ class _MonitorScreenState extends State<MonitorScreen> {
             .build());
 
     socket.connect();
-    /*socketsPocket.addSocket(socket);*/
     _sockets.add(socket);
     socket.onConnect((data) {
       _updateStationConnection(station, true);
@@ -59,28 +55,29 @@ class _MonitorScreenState extends State<MonitorScreen> {
         station.data = data['data'] ?? station.data;
       });
     });
+
+    socket.on('data', (data) {
+      if (mounted == false) return;
+      setState(() {
+        station.data[data['name']] = data['value'];
+      });
+    });
   }
 
   void _getStationList() async {
-    setState(() {
-      _stations = [];
-    });
-
-    /*SocketsPocket socketsPocket = SocketsPocket();
-    List<IO.Socket> sockets = socketsPocket.sockets;
-    for (var socket in sockets) {
+    for (var socket in _sockets) {
       socket.disconnect();
     }
-    sockets.clear();*/
 
-    List<dynamic> stations = await getStationList();
+    setState(() {
+      _stations = [];
+      _sockets = [];
+    });
 
-    List<String> branchOffices = dataExtract(stations, 'branchOffice');
-    stations = searchStations(stations, 'branchOffice',
-        branchOffices[findCategoryIndex(branchOffices, _selectBranchOffice)]);
-    List<String> projectNames = dataExtract(stations, 'projectName');
-    stations = searchStations(stations, 'projectName',
-        projectNames[findCategoryIndex(projectNames, _selectProjectName)]);
+    Map<String, dynamic> stationGroup = await groupingStations(_selectBranchOffice, _selectProjectName, null);
+    List<dynamic> stations = stationGroup['stations'];
+    List<String> branchOffices = stationGroup['branchOffices'];
+    List<String> projectNames = stationGroup['projectNames'];
 
     setState(() {
       _branchOffices = branchOffices;
@@ -96,7 +93,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
         _stations.add(station);
       });
 
-      await _connectSocket(/*socketsPocket, */station);
+      await _connectSocket(station);
     }
   }
 
@@ -115,6 +112,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
   void dispose() {
     for (var socket in _sockets) {
       socket.disconnect();
+      print('disconnect!');
     }
 
     super.dispose();

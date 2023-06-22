@@ -25,36 +25,32 @@ class _SettingScreenState extends State<SettingScreen> {
   String _selectProjectName = '';
   String _selectStationName = '';
   String _uuid = '';
-  Settings? _settings = null;
+  Settings? _settings;
 
   void _getStationList() async {
-    List<dynamic> stations = await getStationList();
-    List<String> branchOffices = dataExtract(stations, 'branchOffice');
-    stations = searchStations(stations, 'branchOffice',
-        branchOffices[findCategoryIndex(branchOffices, _selectBranchOffice)]);
-    List<String> projectNames = dataExtract(stations, 'projectName');
-    stations = searchStations(stations, 'projectName',
-        projectNames[findCategoryIndex(projectNames, _selectProjectName)]);
-    List<String> stationNames = dataExtract(stations, 'stationName');
-    stations = searchStations(stations, 'stationName',
-        stationNames[findCategoryIndex(stationNames, _selectStationName)]);
+
+    Map<String, dynamic> stationGroup = await groupingStations(_selectBranchOffice, _selectProjectName, _selectStationName);
+    List<dynamic> stations = stationGroup['stations'];
+    List<String> branchOffices = stationGroup['branchOffices'];
+    List<String> projectNames = stationGroup['projectNames'];
+    List<String> stationNames = stationGroup['stationNames'];
 
     if (stations.isEmpty) return;
     setState(() {
       _branchOffices = branchOffices;
       _projectNames = projectNames;
       _stationNames = stationNames;
-      _selectBranchOffice = (_selectBranchOffice == '') ? branchOffices[0] : _selectBranchOffice;
-      _selectProjectName = (_selectProjectName == '') ? projectNames[0] : _selectProjectName;
-      _selectStationName = (_selectStationName == '') ? stationNames[0] : _selectStationName;
+      _selectBranchOffice = branchOffices[findCategoryIndex(branchOffices, _selectBranchOffice)];
+      _selectProjectName = projectNames[findCategoryIndex(projectNames, _selectProjectName)];
+      _selectStationName = stationNames[findCategoryIndex(projectNames, _selectStationName)];
       _uuid = stations[0]['uuid'];
     });
   }
 
   void _connectStation() async {
-    var url = '$host/setting?id=$_uuid';
-    var res = await http.read(Uri.parse(url));
-    var parsed = json.decode(res);
+    String url = '$host/setting/setting?id=$_uuid';
+    http.Response res = await getHttp(url);
+    Map<String, dynamic> parsed = json.decode(res.body);
 
     setState(() {
       _settings = Settings.fromJson(parsed);
@@ -62,6 +58,9 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   void _saveStation() async {
+    String url = '$host/setting/setting?id=$_uuid';
+    http.Response res = await postHttp(url, _settings!.toJson());
+    int statusCode = res.statusCode;
 
   }
 
