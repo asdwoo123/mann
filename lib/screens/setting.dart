@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:mann/models/settings.dart';
+import 'package:mann/utils/station.dart';
 import 'package:mann/widgets/custom_dropdown.dart';
 import 'package:mann/widgets/custom_roundbutton.dart';
 import 'package:http/http.dart' as http;
@@ -48,8 +49,8 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   void _connectStation() async {
-    String url = '$host/setting/setting?id=$_uuid';
-    http.Response res = await getHttp(url);
+    String url = '$hostName/setting/setting?id=$_uuid';
+    http.Response res = await getHttpRequest(url);
     Map<String, dynamic> parsed = json.decode(res.body);
 
     setState(() {
@@ -58,8 +59,8 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   void _saveStation() async {
-    String url = '$host/setting/setting?id=$_uuid';
-    http.Response res = await postHttp(url, _settings!.toJson());
+    String url = '$hostName/setting/setting?id=$_uuid';
+    http.Response res = await postHttpRequest(url, _settings!.toJson());
     int statusCode = res.statusCode;
 
   }

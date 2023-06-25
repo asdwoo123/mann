@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:mann/constants.dart';
 import 'package:mann/screens/history.dart';
 import 'package:mann/screens/management.dart';
 import 'package:mann/screens/monitor.dart';
 import 'package:mann/screens/setting.dart';
 import 'package:mann/theme.dart';
-import 'package:mann/widgets/brightness_button.dart';
-import 'package:mann/widgets/colorseed_button.dart';
+import 'package:mann/widgets/logout_button.dart';
 import 'package:toast/toast.dart';
 
-import '../constants.dart';
 
 const List<Widget> widgetOptions = [
   MonitorScreen(),
@@ -52,11 +51,10 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.white,
         title: SizedBox(
           height: 30,
-            child: Image.asset('assets/MANN+HUMMEL_Logo.png')),
-        /*actions: [
-          BrightnessButton(handleBrightnessChange: widget.handleBrightnessChange),
-          ColorSeedButton(handleColorSelect: widget.handleColorSelect, colorSelected: widget.colorSelected)
-        ],*/
+            child: Image.asset('assets/${companyName}_Logo.png')),
+        actions: const [
+          LogoutButton()
+        ],
       ),
       body: SafeArea(
         child: Container(

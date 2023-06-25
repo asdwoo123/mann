@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mann/screens/home.dart';
+import 'constants.dart';
 import 'package:mann/screens/intro.dart';
-import 'package:mann/screens/monitor.dart';
-import 'package:mann/screens/project.dart';
 
 import 'constants.dart';
 
@@ -51,7 +50,7 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'MANN&HUMMEL',
+      title: companyName,
       debugShowCheckedModeBanner: false,
       themeMode: themeMode,
       theme: ThemeData(

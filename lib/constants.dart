@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 const String apiKey = 'SEOJUN1497';
-const String host = 'http://seojuneng.ddns.net';
-const String company = 'MANN';
+const String hostName = 'http://seojuneng.ddns.net';
+const String companyName = 'MANN';
 const double narrowScreenWidthThreshold = 450;
 
 const double mediumWidthBreakpoint = 1000;

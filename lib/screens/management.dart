@@ -16,9 +16,10 @@ class ManagementPage extends StatefulWidget {
 
 class _ManagementPageState extends State<ManagementPage> {
   List<User> _users = [];
+  User? _selectedUser;
 
   void _getUsers() async {
-    var url = '$host/user/all';
+    var url = '$hostName/user/all';
     http.Response response = await http.get(Uri.parse(url));
     var decodeData = jsonDecode(response.body);
     var usersJson = decodeData['users'];
@@ -73,6 +74,9 @@ class _ManagementPageState extends State<ManagementPage> {
         child: ListView.builder(shrinkWrap: true, itemCount: _users.length,
             itemBuilder: (BuildContext ctx, int idx) {
           var user = _users[idx];
+          setState(() {
+            _selectedUser = user;
+          });
           return Row(
             children: [
               Text(user.name),
@@ -80,9 +84,9 @@ class _ManagementPageState extends State<ManagementPage> {
               ElevatedButton(onPressed: _showDialog,
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(
-                    user.authority == 0 ? Colors.green : Colors.red,
+                    user.authority == 0 ? Colors.red : Colors.green,
                   ),
-                ), child: Text(user.authority == 0 ? 'ON' : 'OFF'),
+                ), child: Text(user.authority == 0 ? 'OFF' : 'ON'),
               ),
             ],
           );

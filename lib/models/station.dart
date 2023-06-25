@@ -22,7 +22,7 @@ class Station {
   factory Station.fromJson(Map<String, dynamic> json) {
     return Station(
       stationName: json['stationName'] ?? '',
-      connectIp: '$host?id=${json["uuid"]}',
+      connectIp: '$hostName?id=${json["uuid"]}',
       isConnect: json['isConnect'] ?? false,
       isCamera: json['isCamera'] ?? false,
       isPantilt: json['isPantilt'] ?? false,

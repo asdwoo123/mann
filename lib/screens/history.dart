@@ -3,12 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:custom_date_range_picker/custom_date_range_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:mann/services/network.dart';
 import 'package:mann/theme.dart';
 import 'package:mann/constants.dart';
 import 'package:http/http.dart' as http;
+import 'package:mann/utils/station.dart';
 import 'package:mann/widgets/custom_roundbutton.dart';
 
-import '../services/network.dart';
 import '../widgets/custom_dropdown.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -63,8 +64,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
     String barcode = _barcodeController.text;
     String searchQuery = '/data/save?page=${_page.toString()}&barcode=$barcode&start_period='
         '${_startDate.toString()}&end_period=${_endDate.toString()}';
-    String url = '$host$searchQuery&id=$_uuid';
-    http.Response response = await getHttp(url);
+    String url = '$hostName$searchQuery&id=$_uuid';
+    http.Response response = await getHttpRequest(url);
     Map<String, dynamic> decodedRes = jsonDecode(response.body);
     int count = decodedRes['count'];
     List<dynamic> data = decodedRes['data'];

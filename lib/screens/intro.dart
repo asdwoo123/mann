@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mann/screens/home.dart';
 import 'package:mann/sub.dart';
+import 'package:mann/utils/user.dart';
 import 'package:mann/widgets/custom_roundbutton.dart';
 import 'package:http/http.dart' as http;
 import 'package:mann/constants.dart';
@@ -24,15 +25,16 @@ class _IntroScreenState extends State<IntroScreen> {
       return;
     }
 
-    String url = '$host/user';
-    print(url);
+    String url = '$hostName/user';
+
     http.Response response = await http.post(
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode({ 'headOffice': company, 'name': name }));
+        body: jsonEncode({ 'headOffice': companyName, 'name': name }));
     if (response.statusCode == 200) {
+      login(_nameController.text);
        _navigateToHomeScreen(context);
     } else if (response.statusCode == 404) {
       showToast('이미 존재하는 이름입니다.');
