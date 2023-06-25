@@ -27,7 +27,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   String _selectProjectName = '';
   String _selectStationName = '';
   String _uuid = '';
-  int _page = 1;
+  int _page = 0;
   bool _isLoading = false;
   DateTime? _startDate;
   DateTime? _endDate;
@@ -61,8 +61,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   void _getData() async {
     if (_uuid == '') return;
+    setState(() {
+      _isLoading = true;
+    });
     String barcode = _barcodeController.text;
-    String searchQuery = '/data/save?page=${_page.toString()}&barcode=$barcode&start_period='
+    String searchQuery =
+        '/data/save?page=${_page.toString()}&barcode=$barcode&start_period='
         '${_startDate.toString()}&end_period=${_endDate.toString()}';
     String url = '$hostName$searchQuery&id=$_uuid';
     http.Response response = await getHttpRequest(url);
@@ -70,13 +74,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     int count = decodedRes['count'];
     List<dynamic> data = decodedRes['data'];
 
-    /*var dummyData = [];
-    for (var i = 1; i < 31; i++) {
-      dummyData.add({'time': '2023-06-09', 'no': i, '1': 1, '2': 2, '3': 3});
-    }*/
-    if (data.isNotEmpty) {
-      print(data[0].keys.toList());
-
+    if (data.isNotEmpty || (count / 30 > _page)) {
       var columns = data[0]
           .keys
           .map<DataColumn>((column) => DataColumn(label: Text(column)))
@@ -84,30 +82,22 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
       var rows = data
           .map((value) {
-        var parsedTime = DateTime.tryParse(value['time']);
-        value['time'] = parsedTime != null
-            ? DateFormat('yyyy-MM-dd kk:mm:ss').format(parsedTime)
-            : '';
-        return value;
-      })
+            var parsedTime = DateTime.tryParse(value['time']);
+            value['time'] = parsedTime != null
+                ? DateFormat('yyyy-MM-dd kk:mm:ss').format(parsedTime)
+                : '';
+            return value;
+          })
           .map((value) => value.values.map<DataCell>((v) {
-        var cellValue = v ?? 0;
-        return DataCell(Text(cellValue.toString()));
-      }).toList())
+                var cellValue = v ?? 0;
+                return DataCell(Text(cellValue.toString()));
+              }).toList())
           .map<DataRow>((cells) => DataRow(cells: cells))
           .toList();
 
-      if (_page > 1) {
-        setState(() {
-          _columns = columns;
-          _rows.addAll(rows);
-        });
-      } else {
-        setState(() {
-          _columns = columns;
-          _rows = rows;
-        });
-      }
+      _rows.addAll(rows);
+      _page = _page + 1;
+      _columns = columns;
     }
 
     setState(() {
@@ -119,13 +109,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
     if (_scrollController.position.pixels ==
             _scrollController.position.maxScrollExtent &&
         !_isLoading) {
-      setState(() {
-        _isLoading = true;
-        _page = _page + 1;
-      });
-
       _getData();
     }
+  }
+
+  String _dateRangeFormat(DateTime? startDate, DateTime? endDate) {
+    if (startDate == null || endDate == null) return '-';
+    return '${DateFormat("MM - dd").format(startDate)}  /  ${DateFormat("MM - dd").format(endDate)}';
   }
 
   @override
@@ -201,7 +191,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   ),
                   Expanded(
                       child: Text(
-                    '${_startDate != null ? DateFormat("MM - dd").format(_startDate!) : '-'}   /   ${_endDate != null ? DateFormat("MM - dd").format(_endDate!) : '-'}',
+                    _dateRangeFormat(_startDate, _endDate),
                     style: const TextStyle(fontSize: 16),
                   )),
                   ElevatedButton(
@@ -244,6 +234,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   CustomRoundButton(
                       text: 'get Data',
                       onPressed: () {
+                        setState(() {
+                          _page = 0;
+                          _rows = [];
+                        });
                         _getData();
                       })
                 ],
@@ -260,10 +254,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10)),
                 child: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
+                  physics: const BouncingScrollPhysics(),
                   scrollDirection: Axis.horizontal,
                   child: SingleChildScrollView(
-                      physics: BouncingScrollPhysics(),
+                      physics: const BouncingScrollPhysics(),
                       scrollDirection: Axis.vertical,
                       child: DataTable(columns: _columns, rows: _rows)),
                 ),
