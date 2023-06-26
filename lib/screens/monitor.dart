@@ -124,41 +124,24 @@ class _MonitorScreenState extends State<MonitorScreen> {
         onRefresh: _onRefresh,
         child: ListView(
             children: [
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            decoration: const BoxDecoration(
-              color: Colors.white
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: CustomDropdown(
-                      value: _selectBranchOffice,
-                      items: _branchOffices,
-                      onChanged: (dynamic value) {
-                        setState(() {
-                          _selectBranchOffice = value;
-                        });
-                        _getStationList();
-                      }),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Expanded(
-                  child: CustomDropdown(
-                      value: _selectProjectName,
-                      items: _projectNames,
-                      onChanged: (dynamic value) {
-                        setState(() {
-                          _selectProjectName = value;
-                        });
-                        _getStationList();
-                      }),
-                ),
-              ],
-            ),
-          ),
+          CustomDropdown(
+              value: _selectBranchOffice,
+              items: _branchOffices,
+              onChanged: (dynamic value) {
+                setState(() {
+                  _selectBranchOffice = value;
+                });
+                _getStationList();
+              }),
+          CustomDropdown(
+              value: _selectProjectName,
+              items: _projectNames,
+              onChanged: (dynamic value) {
+                setState(() {
+                  _selectProjectName = value;
+                });
+                _getStationList();
+              }),
           const SizedBox(height: 20,),
           ListView.builder(
               shrinkWrap: true,

@@ -9,6 +9,7 @@ import 'package:mann/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:mann/utils/station.dart';
 import 'package:mann/widgets/custom_roundbutton.dart';
+import 'package:mann/widgets/dropdown_group.dart';
 
 import '../widgets/custom_dropdown.dart';
 
@@ -20,12 +21,6 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
-  List<String> _branchOffices = [];
-  List<String> _projectNames = [];
-  List<String> _stationNames = [];
-  String _selectBranchOffice = '';
-  String _selectProjectName = '';
-  String _selectStationName = '';
   String _uuid = '';
   int _page = 0;
   bool _isLoading = false;
@@ -35,29 +30,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
   List<DataColumn> _columns = [];
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _barcodeController = TextEditingController();
-
-  void _getStationList() async {
-    Map<String, dynamic> stationGroup = await groupingStations(
-        _selectBranchOffice, _selectProjectName, _selectStationName);
-    List<dynamic> stations = stationGroup['stations'];
-    List<String> branchOffices = stationGroup['branchOffices'];
-    List<String> projectNames = stationGroup['projectNames'];
-    List<String> stationNames = stationGroup['stationNames'];
-
-    if (stations.isEmpty) return;
-    setState(() {
-      _branchOffices = branchOffices;
-      _projectNames = projectNames;
-      _stationNames = stationNames;
-      _selectBranchOffice =
-          branchOffices[findCategoryIndex(branchOffices, _selectBranchOffice)];
-      _selectProjectName =
-          projectNames[findCategoryIndex(projectNames, _selectProjectName)];
-      _selectStationName =
-          stationNames[findCategoryIndex(projectNames, _selectStationName)];
-      _uuid = stations[0]['uuid'];
-    });
-  }
 
   void _getData() async {
     if (_uuid == '') return;
@@ -121,8 +93,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
   @override
   void initState() {
     _scrollController.addListener(_scrollListener);
-
-    _getStationList();
     super.initState();
   }
 
@@ -137,113 +107,67 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return ListView(
       controller: _scrollController,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomDropdown(
-                        value: _selectBranchOffice,
-                        items: _branchOffices,
-                        onChanged: (dynamic value) {
-                          setState(() {
-                            _selectBranchOffice = value;
-                          });
-                          _getStationList();
-                        }),
+        Column(
+          children: [
+            DropdownGroup(onChanged: (uuid) {
+              setState(() {
+                _uuid = uuid;
+              });
+            }),
+            Row(
+              children: [
+            Expanded(
+                child: Text(
+              _dateRangeFormat(_startDate, _endDate),
+              style: const TextStyle(fontSize: 16),
+            )),
+            ElevatedButton(
+                onPressed: () {
+                  showCustomDateRangePicker(context,
+                      dismissible: true,
+                      minimumDate: DateTime.now()
+                          .subtract(const Duration(days: 365)),
+                      maximumDate: DateTime.now(),
+                      startDate: _startDate,
+                      endDate: _endDate, onApplyClick: (start, end) {
+                    setState(() {
+                      _endDate = end;
+                      _startDate = start;
+                    });
+                  }, onCancelClick: () {
+                    setState(() {
+                      _endDate = null;
+                      _startDate = null;
+                    });
+                  },
+                      backgroundColor: primaryBlue,
+                      primaryColor: primaryBlue);
+                },
+                child: const Text('Choose Date')),]),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                        labelText: 'Barcode',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10))),
+                    controller: _barcodeController,
                   ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: CustomDropdown(
-                        value: _selectProjectName,
-                        items: _projectNames,
-                        onChanged: (dynamic value) {
-                          setState(() {
-                            _selectProjectName = value;
-                          });
-                          _getStationList();
-                        }),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomDropdown(
-                        value: _selectStationName,
-                        items: _stationNames,
-                        onChanged: (dynamic value) {
-                          setState(() {
-                            _selectStationName = value;
-                          });
-                          _getStationList();
-                        }),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                      child: Text(
-                    _dateRangeFormat(_startDate, _endDate),
-                    style: const TextStyle(fontSize: 16),
-                  )),
-                  ElevatedButton(
-                      onPressed: () {
-                        showCustomDateRangePicker(context,
-                            dismissible: true,
-                            minimumDate: DateTime.now()
-                                .subtract(const Duration(days: 365)),
-                            maximumDate: DateTime.now(),
-                            startDate: _startDate,
-                            endDate: _endDate, onApplyClick: (start, end) {
-                          setState(() {
-                            _endDate = end;
-                            _startDate = start;
-                          });
-                        }, onCancelClick: () {
-                          setState(() {
-                            _endDate = null;
-                            _startDate = null;
-                          });
-                        },
-                            backgroundColor: primaryBlue,
-                            primaryColor: primaryBlue);
-                      },
-                      child: const Text('Choose Date')),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                          labelText: 'Barcode',
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10))),
-                      controller: _barcodeController,
-                    ),
-                  ),
-                  const Spacer(),
-                  CustomRoundButton(
-                      text: 'get Data',
-                      onPressed: () {
-                        setState(() {
-                          _page = 0;
-                          _rows = [];
-                        });
-                        _getData();
-                      })
-                ],
-              ),
-            ],
-          ),
+                ),
+                const Spacer(),
+                CustomRoundButton(
+                    text: 'get Data',
+                    onPressed: () {
+                      setState(() {
+                        _page = 0;
+                        _rows = [];
+                      });
+                      _getData();
+                    })
+              ],
+            ),
+          ],
         ),
         const SizedBox(
           height: 20,
