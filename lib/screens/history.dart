@@ -109,11 +109,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
       children: [
         Column(
           children: [
-            DropdownGroup(onChanged: (uuid) {
+            DropdownGroup(onChanged: (List<dynamic> stations) {
               setState(() {
-                _uuid = uuid;
+                _uuid = stations[0]['uuid'];
               });
-            }),
+            }, projectUntil: false,),
             Row(
               children: [
             Expanded(

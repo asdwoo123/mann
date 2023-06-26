@@ -6,9 +6,11 @@ class DropdownGroup extends StatefulWidget {
   const DropdownGroup({
     super.key,
     required this.onChanged,
+    required this.projectUntil
   });
 
-  final void Function(String) onChanged;
+  final void Function(List<dynamic>) onChanged;
+  final bool projectUntil;
 
   @override
   State<DropdownGroup> createState() => _DropdownGroupState();
@@ -21,31 +23,45 @@ class _DropdownGroupState extends State<DropdownGroup> {
   String _selectBranchOffice = '';
   String _selectProjectName = '';
   String _selectStationName = '';
-  String _uuid = '';
 
   void _getStationList() async {
-    Map<String, dynamic> stationGroup = await groupingStations(
-        _selectBranchOffice, _selectProjectName, _selectStationName);
-    List<dynamic> stations = stationGroup['stations'];
-    List<String> branchOffices = stationGroup['branchOffices'];
-    List<String> projectNames = stationGroup['projectNames'];
-    List<String> stationNames = stationGroup['stationNames'];
+    List<dynamic> stations = await getStationList();
 
-    if (stations.isEmpty) return;
+    List<String> branchOffices = extractDataList(stations, 'branchOffice');
+    stations = searchStations(stations, 'branchOffice',
+        branchOffices[findCategoryIndex(branchOffices, _selectBranchOffice)]);
+
+    List<String> projectNames = extractDataList(stations, 'projectName');
+    stations = searchStations(stations, 'projectName',
+        projectNames[findCategoryIndex(projectNames, _selectProjectName)]);
+
+    if (widget.projectUntil == false) {
+      List<String> stationNames = extractDataList(stations, 'stationName');
+      stations = searchStations(stations, 'stationName',
+          stationNames[findCategoryIndex(stationNames, _selectStationName)]);
+      _stationNames = stationNames;
+    }
+
     setState(() {
       _branchOffices = branchOffices;
       _projectNames = projectNames;
-      _stationNames = stationNames;
-      _selectBranchOffice =
-          branchOffices[findCategoryIndex(branchOffices, _selectBranchOffice)];
-      _selectProjectName =
-          projectNames[findCategoryIndex(projectNames, _selectProjectName)];
-      _selectStationName =
-          stationNames[findCategoryIndex(projectNames, _selectStationName)];
-      _uuid = stations[0]['uuid'];
+      _selectBranchOffice = _branchOffices.isEmpty ? '' :
+      branchOffices[findCategoryIndex(branchOffices, _selectBranchOffice)];
+      _selectProjectName = _projectNames.isEmpty ? '' :
+      projectNames[findCategoryIndex(projectNames, _selectProjectName)];
+      _selectStationName = _stationNames.isEmpty ? '' :
+      _stationNames[findCategoryIndex(_stationNames, _selectStationName)];
     });
 
-    widget.onChanged(_uuid);
+    widget.onChanged(stations);
+  }
+
+  @override
+  void initState() {
+    if (widget.projectUntil) {
+      _getStationList();
+    }
+    super.initState();
   }
 
   @override
@@ -72,6 +88,7 @@ class _DropdownGroupState extends State<DropdownGroup> {
             _getStationList();
           },
         ),
+        (!widget.projectUntil) ?
         CustomDropdown(
           items: _stationNames,
           value: _selectStationName,
@@ -81,7 +98,7 @@ class _DropdownGroupState extends State<DropdownGroup> {
             });
             _getStationList();
           },
-        ),
+        ) : Container(),
       ],
     );
   }

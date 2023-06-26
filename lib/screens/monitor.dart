@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mann/utils/station.dart';
 import 'package:mann/widgets/custom_cardview.dart';
 import 'package:mann/widgets/custom_dropdown.dart';
+import 'package:mann/widgets/dropdown_group.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import '../models/station.dart';
@@ -14,12 +15,8 @@ class MonitorScreen extends StatefulWidget {
 }
 
 class _MonitorScreenState extends State<MonitorScreen> {
-  List<String> _branchOffices = [];
-  List<String> _projectNames = [];
-  String _selectBranchOffice = '';
-  String _selectProjectName = '';
-  List<Station> _stations = [];
-  List<IO.Socket> _sockets = [];
+  final List<Station> _stations = [];
+  final List<IO.Socket> _sockets = [];
 
   void _updateStationConnection(Station station, bool isConnected) {
     if (!mounted) return;
@@ -29,6 +26,11 @@ class _MonitorScreenState extends State<MonitorScreen> {
   }
 
   Future<void> _connectSocket(Station station) async {
+    for (var socket in _sockets) {
+      socket.disconnect();
+    }
+    _sockets.clear();
+
     IO.Socket socket = IO.io(
         station.connectIp,
         IO.OptionBuilder()
@@ -64,47 +66,9 @@ class _MonitorScreenState extends State<MonitorScreen> {
     });
   }
 
-  void _getStationList() async {
-    for (var socket in _sockets) {
-      socket.disconnect();
-    }
-
-    setState(() {
-      _stations = [];
-      _sockets = [];
-    });
-
-    Map<String, dynamic> stationGroup = await groupingStations(_selectBranchOffice, _selectProjectName, null);
-    List<dynamic> stations = stationGroup['stations'];
-    List<String> branchOffices = stationGroup['branchOffices'];
-    List<String> projectNames = stationGroup['projectNames'];
-
-    setState(() {
-      _branchOffices = branchOffices;
-      _projectNames = projectNames;
-      _selectBranchOffice = branchOffices[findCategoryIndex(branchOffices, _selectBranchOffice)];
-      _selectProjectName = projectNames[findCategoryIndex(projectNames, _selectProjectName)];
-    });
-
-    for (var stationJSON in stations) {
-      Station station = Station.fromJson(stationJSON);
-
-      setState(() {
-        _stations.add(station);
-      });
-
-      await _connectSocket(station);
-    }
-  }
-
-  Future<void> _onRefresh() {
-    _getStationList();
-    return Future<void>.value();
-  }
 
   @override
   void initState() {
-    _getStationList();
     super.initState();
   }
 
@@ -112,7 +76,6 @@ class _MonitorScreenState extends State<MonitorScreen> {
   void dispose() {
     for (var socket in _sockets) {
       socket.disconnect();
-      print('disconnect!');
     }
 
     super.dispose();
@@ -120,36 +83,28 @@ class _MonitorScreenState extends State<MonitorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-        onRefresh: _onRefresh,
-        child: ListView(
-            children: [
-          CustomDropdown(
-              value: _selectBranchOffice,
-              items: _branchOffices,
-              onChanged: (dynamic value) {
-                setState(() {
-                  _selectBranchOffice = value;
-                });
-                _getStationList();
-              }),
-          CustomDropdown(
-              value: _selectProjectName,
-              items: _projectNames,
-              onChanged: (dynamic value) {
-                setState(() {
-                  _selectProjectName = value;
-                });
-                _getStationList();
-              }),
-          const SizedBox(height: 20,),
-          ListView.builder(
-              shrinkWrap: true,
-              itemCount: _stations.length,
-              itemBuilder: (BuildContext ctx, int idx) {
-                var station = _stations[idx];
-                return CustomCardView(station: station);
-              })
-        ]));
+    return ListView(
+        children: [
+      DropdownGroup(onChanged: (List<dynamic> stations) async {
+        _stations.clear();
+        for (var stationJSON in stations) {
+          Station station = Station.fromJson(stationJSON);
+
+          setState(() {
+            _stations.add(station);
+          });
+
+          await _connectSocket(station);
+        }
+      }, projectUntil: true),
+      const SizedBox(height: 20,),
+      ListView.builder(
+          shrinkWrap: true,
+          itemCount: _stations.length,
+          itemBuilder: (BuildContext ctx, int idx) {
+            var station = _stations[idx];
+            return CustomCardView(station: station);
+          })
+    ]);
   }
 }

@@ -50,11 +50,11 @@ class _SettingScreenState extends State<SettingScreen> {
     return SingleChildScrollView(
       child: ListBody(
         children: [
-          DropdownGroup(onChanged: (uuid) {
+          DropdownGroup(onChanged: (List<dynamic> stations) {
             setState(() {
-              _uuid = uuid;
+              _uuid = stations[0]['uuid'];
             });
-          }),
+          }, projectUntil: false,),
           CustomRoundButton(onPressed: _connectStation,
             text: 'Connect',),
           const SizedBox(height: 10,),
