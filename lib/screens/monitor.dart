@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mann/constants.dart';
 import 'package:mann/utils/station.dart';
 import 'package:mann/widgets/custom_cardview.dart';
 import 'package:mann/widgets/custom_dropdown.dart';
@@ -18,6 +19,24 @@ class _MonitorScreenState extends State<MonitorScreen> {
   final List<Station> _stations = [];
   final List<IO.Socket> _sockets = [];
 
+  void _initStationConnection(List<dynamic> stations) async {
+    _stations.clear();
+    for (var socket in _sockets) {
+      socket.disconnect();
+    }
+    _sockets.clear();
+
+    for (var stationJSON in stations) {
+      Station station = Station.fromJson(stationJSON);
+
+      setState(() {
+        _stations.add(station);
+      });
+
+      await _connectSocket(station);
+    }
+  }
+
   void _updateStationConnection(Station station, bool isConnected) {
     if (!mounted) return;
     setState(() {
@@ -26,13 +45,9 @@ class _MonitorScreenState extends State<MonitorScreen> {
   }
 
   Future<void> _connectSocket(Station station) async {
-    for (var socket in _sockets) {
-      socket.disconnect();
-    }
-    _sockets.clear();
 
     IO.Socket socket = IO.io(
-        station.connectIp,
+        '$hostName?id=${station.uuid}',
         IO.OptionBuilder()
             .setTransports(['websocket'])
         .disableAutoConnect()
@@ -85,18 +100,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
   Widget build(BuildContext context) {
     return ListView(
         children: [
-      DropdownGroup(onChanged: (List<dynamic> stations) async {
-        _stations.clear();
-        for (var stationJSON in stations) {
-          Station station = Station.fromJson(stationJSON);
-
-          setState(() {
-            _stations.add(station);
-          });
-
-          await _connectSocket(station);
-        }
-      }, projectUntil: true),
+      DropdownGroup(onChanged: _initStationConnection, projectUntil: true),
       const SizedBox(height: 20,),
       ListView.builder(
           shrinkWrap: true,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mann/screens/home.dart';
+import 'package:mann/screens/signin.dart';
+import 'package:mann/screens/signup.dart';
 import 'constants.dart';
 import 'package:mann/screens/intro.dart';
 

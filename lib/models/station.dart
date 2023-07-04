@@ -2,7 +2,7 @@ import 'package:mann/constants.dart';
 
 class Station {
   final String stationName;
-  final String connectIp;
+  final String uuid;
   bool isConnect;
   bool isCamera;
   bool isPantilt;
@@ -11,7 +11,7 @@ class Station {
 
   Station({
     required this.stationName,
-    required this.connectIp,
+    required this.uuid,
     required this.isConnect,
     required this.isCamera,
     required this.isPantilt,
@@ -22,7 +22,7 @@ class Station {
   factory Station.fromJson(Map<String, dynamic> json) {
     return Station(
       stationName: json['stationName'] ?? '',
-      connectIp: '$hostName?id=${json["uuid"]}',
+      uuid: json['uuid'] ?? '',
       isConnect: json['isConnect'] ?? false,
       isCamera: json['isCamera'] ?? false,
       isPantilt: json['isPantilt'] ?? false,
@@ -34,7 +34,7 @@ class Station {
   Map<String, dynamic> toJson() {
     return {
       'stationName': stationName,
-      'connectIp': connectIp,
+      'uuid': uuid,
       'isConnect': isConnect,
       'isCamera': isCamera,
       'isPantilt': isPantilt,

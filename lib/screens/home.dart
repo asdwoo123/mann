@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: SafeArea(
         child: Container(
-          decoration: const BoxDecoration(color: backgroundGrey),
+          /*decoration: const BoxDecoration(color: backgroundGrey),*/
           child: IndexedStack(
             index: _selectedIndex,
             children: widgetOptions,

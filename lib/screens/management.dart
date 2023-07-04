@@ -71,26 +71,36 @@ class _ManagementPageState extends State<ManagementPage> {
         constraints: const BoxConstraints(
           minHeight: 500
         ),
-        child: ListView.builder(shrinkWrap: true, itemCount: _users.length,
-            itemBuilder: (BuildContext ctx, int idx) {
-          var user = _users[idx];
-          setState(() {
-            _selectedUser = user;
-          });
-          return Row(
-            children: [
-              Text(user.name),
-              const Spacer(),
-              ElevatedButton(onPressed: _showDialog,
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                    user.authority == 0 ? Colors.red : Colors.green,
+        child: Column(
+          children: [
+            const Row(
+              children: [
+                Text('유저', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                Spacer(),
+                Text('권한', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                SizedBox(width: 20,)
+              ],
+            ),
+            const SizedBox(height: 10,),
+            ListView.builder(shrinkWrap: true, itemCount: _users.length,
+                itemBuilder: (BuildContext ctx, int idx) {
+              var user = _users[idx];
+              return Row(
+                children: [
+                  Text(user.name, style: const TextStyle(fontSize: 14),),
+                  const Spacer(),
+                  ElevatedButton(onPressed: _showDialog,
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                        user.authority == 0 ? Colors.red : Colors.green,
+                      ),
+                    ), child: Text(user.authority == 0 ? 'OFF' : 'ON'),
                   ),
-                ), child: Text(user.authority == 0 ? 'OFF' : 'ON'),
-              ),
-            ],
-          );
-            }),
+                ],
+              );
+                }),
+          ],
+        ),
       )
     );
   }

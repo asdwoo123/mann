@@ -7,6 +7,8 @@ const Color textGrey = Color(0xff94959b);
 const Color textGrey2 = Color(0xff828287);
 const Color textPrimaryBlue = Color(0xff417afc);
 const Color textWhiteGrey = Color(0xfff1f1f5);
+const Color textFieldGrey = Color(0xffc9cbd2);
+const Color textFieldBlue = Color(0xff0158fe);
 
 const TextStyle heading2 = TextStyle(
   fontSize: 24,

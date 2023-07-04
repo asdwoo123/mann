@@ -90,6 +90,28 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return '${DateFormat("MM - dd").format(startDate)}  /  ${DateFormat("MM - dd").format(endDate)}';
   }
 
+  void _showDateRangePicker(context) {
+    showCustomDateRangePicker(context,
+        dismissible: true,
+        minimumDate: DateTime.now()
+            .subtract(const Duration(days: 365)),
+        maximumDate: DateTime.now(),
+        startDate: _startDate,
+        endDate: _endDate, onApplyClick: (start, end) {
+          setState(() {
+            _endDate = end;
+            _startDate = start;
+          });
+        }, onCancelClick: () {
+          setState(() {
+            _endDate = null;
+            _startDate = null;
+          });
+        },
+        backgroundColor: primaryBlue,
+        primaryColor: primaryBlue);
+  }
+
   @override
   void initState() {
     _scrollController.addListener(_scrollListener);
@@ -116,37 +138,21 @@ class _HistoryScreenState extends State<HistoryScreen> {
             }, projectUntil: false,),
             Row(
               children: [
-            Expanded(
+            Flexible(
+              fit: FlexFit.tight,
                 child: Text(
               _dateRangeFormat(_startDate, _endDate),
               style: const TextStyle(fontSize: 16),
             )),
             ElevatedButton(
                 onPressed: () {
-                  showCustomDateRangePicker(context,
-                      dismissible: true,
-                      minimumDate: DateTime.now()
-                          .subtract(const Duration(days: 365)),
-                      maximumDate: DateTime.now(),
-                      startDate: _startDate,
-                      endDate: _endDate, onApplyClick: (start, end) {
-                    setState(() {
-                      _endDate = end;
-                      _startDate = start;
-                    });
-                  }, onCancelClick: () {
-                    setState(() {
-                      _endDate = null;
-                      _startDate = null;
-                    });
-                  },
-                      backgroundColor: primaryBlue,
-                      primaryColor: primaryBlue);
+                  _showDateRangePicker(context);
                 },
                 child: const Text('Choose Date')),]),
             Row(
               children: [
-                Expanded(
+                Flexible(
+                  fit: FlexFit.tight,
                   child: TextFormField(
                     decoration: InputDecoration(
                         labelText: 'Barcode',
@@ -155,9 +161,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     controller: _barcodeController,
                   ),
                 ),
-                const Spacer(),
                 CustomRoundButton(
-                    text: 'get Data',
+                    text: 'search Data',
                     onPressed: () {
                       setState(() {
                         _page = 0;

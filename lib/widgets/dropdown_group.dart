@@ -35,7 +35,7 @@ class _DropdownGroupState extends State<DropdownGroup> {
     stations = searchStations(stations, 'projectName',
         projectNames[findCategoryIndex(projectNames, _selectProjectName)]);
 
-    if (widget.projectUntil == false) {
+    if (!widget.projectUntil) {
       List<String> stationNames = extractDataList(stations, 'stationName');
       stations = searchStations(stations, 'stationName',
           stationNames[findCategoryIndex(stationNames, _selectStationName)]);
@@ -58,9 +58,7 @@ class _DropdownGroupState extends State<DropdownGroup> {
 
   @override
   void initState() {
-    if (widget.projectUntil) {
-      _getStationList();
-    }
+    _getStationList();
     super.initState();
   }
 

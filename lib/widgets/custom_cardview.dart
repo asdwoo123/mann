@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:mann/models/station.dart';
 import 'package:mann/theme.dart';
+import 'package:mann/widgets/custom_cameraview.dart';
+import 'package:mann/widgets/custom_remotesheet.dart';
+import 'package:mann/widgets/custom_sharesheet.dart';
 
 class CustomCardView extends StatelessWidget {
   final Station station;
 
-  const CustomCardView({
-    Key? key,
-    required this.station
-  }) : super(key: key);
+  const CustomCardView({Key? key, required this.station}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,46 +25,25 @@ class CustomCardView extends StatelessWidget {
             Row(
               children: [
                 Flexible(
-                  flex: 10,
-                  child: Container(
-                    child: Text(
-                      station.stationName,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
+                  fit: FlexFit.tight,
+                  child: Text(
+                    station.stationName,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
-                Spacer(),
-                OutlinedButton(
-                  onPressed: () {},
-                  child: Text('Share'),
-                  style: OutlinedButton.styleFrom(
-                      primary: primaryBlue,
-                      fixedSize: Size(90, 40),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      side: BorderSide(color: primaryBlue)),
-                ),
+                CustomShareSheet(),
                 const SizedBox(
                   width: 10,
                 ),
-                (station.isRemote)
-                    ? ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                      BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text('Remote'),
-                )
-                    : Container(),
+                CustomRemoteSheet(station: station)
               ],
             ),
+            const SizedBox(
+              height: 20,
+            ),
+            CustomCameraView(station: station),
             const SizedBox(
               height: 20,
             ),
@@ -74,8 +53,7 @@ class CustomCardView extends StatelessWidget {
                 Spacer(),
                 Text(
                   (station.isConnect) ? 'Connect' : 'Disconnect',
-                  style: TextStyle(
-                      fontSize: 15.0, fontWeight: FontWeight.w500),
+                  style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500),
                 )
               ],
             ),
@@ -98,8 +76,7 @@ class CustomCardView extends StatelessWidget {
                         Text(
                           value,
                           style: TextStyle(
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.w500),
+                              fontSize: 15.0, fontWeight: FontWeight.w500),
                         )
                       ],
                     ),
