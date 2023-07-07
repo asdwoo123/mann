@@ -33,23 +33,37 @@ class _ManagementPageState extends State<ManagementPage> {
   }
 
   void _showDialog() {
-    showDialog(context: context,
+    showDialog(
+        context: context,
         builder: (context) {
-      return AlertDialog(
-        title: const Text('정말 유저의 권한을 변경하시겠습니까?'),
-        actions: [
-          CustomRoundButton(text: '네', onPressed: _changeAuthority),
-          CustomRoundButton(text: '아니요', onPressed: () {
-            Navigator.of(context).pop();
-          }),
-        ],
-      );
+          return AlertDialog(
+            title: const Text(
+              '유저의 권한을 변경할까요?',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+            ),
+            actions: [
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomRoundButton(
+                        text: '아니요',
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        }),
+                  ),
+                  SizedBox(width: 10,),
+                  Expanded(
+                    child: CustomRoundButton(
+                        text: '변경 하기', onPressed: _changeAuthority),
+                  ),
+                ],
+              )
+            ],
+          );
         });
   }
 
-  void _changeAuthority() {
-
-  }
+  void _changeAuthority() {}
 
   Future<void> _onRefresh() {
     _getUsers();
@@ -65,43 +79,57 @@ class _ManagementPageState extends State<ManagementPage> {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: _onRefresh,
-      child: Container(
-        padding: const EdgeInsets.all(12.0),
-        constraints: const BoxConstraints(
-          minHeight: 500
-        ),
-        child: Column(
-          children: [
-            const Row(
-              children: [
-                Text('유저', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-                Spacer(),
-                Text('권한', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-                SizedBox(width: 20,)
-              ],
-            ),
-            const SizedBox(height: 10,),
-            ListView.builder(shrinkWrap: true, itemCount: _users.length,
-                itemBuilder: (BuildContext ctx, int idx) {
-              var user = _users[idx];
-              return Row(
+        onRefresh: _onRefresh,
+        child: Container(
+          padding: const EdgeInsets.all(12.0),
+          constraints: const BoxConstraints(minHeight: 500),
+          child: Column(
+            children: [
+              const Row(
                 children: [
-                  Text(user.name, style: const TextStyle(fontSize: 14),),
-                  const Spacer(),
-                  ElevatedButton(onPressed: _showDialog,
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                        user.authority == 0 ? Colors.red : Colors.green,
-                      ),
-                    ), child: Text(user.authority == 0 ? 'OFF' : 'ON'),
-                  ),
+                  Text('유저',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                  Spacer(),
+                  Text('권한',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                  SizedBox(
+                    width: 20,
+                  )
                 ],
-              );
-                }),
-          ],
-        ),
-      )
-    );
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: _users.length,
+                  itemBuilder: (BuildContext ctx, int idx) {
+                    var user = _users[idx];
+                    return Row(
+                      children: [
+                        Text(
+                          user.name,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        const Spacer(),
+                        FilledButton(
+                          onPressed: _showDialog,
+                          style: FilledButton.styleFrom(
+                              backgroundColor: user.authority == 0
+                                  ? Colors.pink
+                                  : Colors.green,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              )),
+                          child: Text(user.authority == 0 ? 'OFF' : 'ON'),
+                        ),
+                      ],
+                    );
+                  }),
+            ],
+          ),
+        ));
   }
 }

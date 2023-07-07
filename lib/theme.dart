@@ -9,6 +9,7 @@ const Color textPrimaryBlue = Color(0xff417afc);
 const Color textWhiteGrey = Color(0xfff1f1f5);
 const Color textFieldGrey = Color(0xffc9cbd2);
 const Color textFieldBlue = Color(0xff0158fe);
+const Color dividerGrey = Color(0xfff2f3f5);
 
 const TextStyle heading2 = TextStyle(
   fontSize: 24,

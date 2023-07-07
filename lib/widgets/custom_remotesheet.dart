@@ -43,14 +43,15 @@ class CustomRemoteSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return (station.isRemote)
-        ? ElevatedButton(
+        ? FilledButton(
       onPressed: () {
         _showRemoteActionSheet(context);
       },
-      style: ElevatedButton.styleFrom(
+      style: FilledButton.styleFrom(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
         ),
+          shadowColor: Colors.transparent,
       ),
       child: const Text('Remote'),
     )

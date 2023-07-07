@@ -7,8 +7,6 @@ import 'package:mann/services/network.dart';
 import 'package:mann/theme.dart';
 import 'package:mann/constants.dart';
 import 'package:http/http.dart' as http;
-import 'package:mann/utils/station.dart';
-import 'package:mann/widgets/custom_roundbutton.dart';
 import 'package:mann/widgets/dropdown_group.dart';
 
 import '../widgets/custom_dropdown.dart';
@@ -93,23 +91,20 @@ class _HistoryScreenState extends State<HistoryScreen> {
   void _showDateRangePicker(context) {
     showCustomDateRangePicker(context,
         dismissible: true,
-        minimumDate: DateTime.now()
-            .subtract(const Duration(days: 365)),
+        minimumDate: DateTime.now().subtract(const Duration(days: 365)),
         maximumDate: DateTime.now(),
         startDate: _startDate,
         endDate: _endDate, onApplyClick: (start, end) {
-          setState(() {
-            _endDate = end;
-            _startDate = start;
-          });
-        }, onCancelClick: () {
-          setState(() {
-            _endDate = null;
-            _startDate = null;
-          });
-        },
-        backgroundColor: primaryBlue,
-        primaryColor: primaryBlue);
+      setState(() {
+        _endDate = end;
+        _startDate = start;
+      });
+    }, onCancelClick: () {
+      setState(() {
+        _endDate = null;
+        _startDate = null;
+      });
+    }, backgroundColor: Colors.white, primaryColor: Colors.green);
   }
 
   @override
@@ -131,48 +126,75 @@ class _HistoryScreenState extends State<HistoryScreen> {
       children: [
         Column(
           children: [
-            DropdownGroup(onChanged: (List<dynamic> stations) {
-              setState(() {
-                _uuid = stations[0]['uuid'];
-              });
-            }, projectUntil: false,),
-            Row(
-              children: [
-            Flexible(
-              fit: FlexFit.tight,
-                child: Text(
-              _dateRangeFormat(_startDate, _endDate),
-              style: const TextStyle(fontSize: 16),
-            )),
-            ElevatedButton(
-                onPressed: () {
-                  _showDateRangePicker(context);
-                },
-                child: const Text('Choose Date')),]),
-            Row(
-              children: [
+            DropdownGroup(
+              onChanged: (List<dynamic> stations) {
+                setState(() {
+                  _uuid = stations[0]['uuid'];
+                });
+              },
+              projectUntil: false,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(children: [
                 Flexible(
-                  fit: FlexFit.tight,
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                        labelText: 'Barcode',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                    controller: _barcodeController,
-                  ),
-                ),
-                CustomRoundButton(
-                    text: 'search Data',
+                    fit: FlexFit.tight,
+                    child: Text(
+                      _dateRangeFormat(_startDate, _endDate),
+                      style: const TextStyle(fontSize: 16),
+                    )),
+                FilledButton(
                     onPressed: () {
-                      setState(() {
-                        _page = 0;
-                        _rows = [];
-                      });
-                      _getData();
-                    })
-              ],
+                      _showDateRangePicker(context);
+                    },
+                    style: FilledButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6))),
+                    child: const Text('Choose Date')),
+              ]),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Flexible(
+                    fit: FlexFit.tight,
+                    child: SizedBox(
+                      height: 50,
+                      child: TextFormField(
+                        decoration: const InputDecoration(
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                width: 1,
+                                color: textFieldGrey
+                              )
+                                ),
+                          hintText: 'Barcode',
+                        ),
+                        controller: _barcodeController,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10,),
+                  FilledButton(
+                      style: FilledButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6))),
+                      onPressed: () {
+                    setState(() {
+                      _page = 0;
+                      _rows = [];
+                    });
+                    _getData();
+                  }, child: const Text('Search Data'))
+                ],
+              ),
             ),
           ],
+        ),
+        const Divider(
+          thickness: 20,
+          color: dividerGrey,
         ),
         const SizedBox(
           height: 20,

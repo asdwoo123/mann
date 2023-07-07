@@ -56,12 +56,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: SafeArea(
-        child: Container(
-          /*decoration: const BoxDecoration(color: backgroundGrey),*/
-          child: IndexedStack(
-            index: _selectedIndex,
-            children: widgetOptions,
-          ),
+        child: IndexedStack(
+          index: _selectedIndex,
+          children: widgetOptions,
         ),
       ),
       bottomNavigationBar:
@@ -69,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
         type: BottomNavigationBarType.fixed,
         showSelectedLabels: false,
         showUnselectedLabels: false,
-        selectedItemColor: Colors.black87,
+        /*selectedItemColor: Colors.black87,*/
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.desktop_windows_sharp, size: _size), label: '모니터링'),
           BottomNavigationBarItem(icon: Icon(Icons.history, size: _size), label: '기록'),

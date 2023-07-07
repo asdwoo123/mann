@@ -15,9 +15,17 @@ class CustomRoundButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FilledButton(
-      onPressed: onPressed,
-      child: Text(text, style: const TextStyle(fontSize: 16),) ,
+    return SizedBox(
+      height: 50,
+      child: FilledButton(
+        onPressed: onPressed,
+          style: FilledButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        child: Text(text, style: const TextStyle(fontSize: 16),),
+      ),
     );
     return SizedBox(
       height: height,

@@ -6,16 +6,15 @@ class CustomShareSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton(
+    return FilledButton(
       onPressed: () {},
-      child: Text('Share'),
-      style: OutlinedButton.styleFrom(
-          primary: primaryBlue,
-          fixedSize: Size(90, 40),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          side: BorderSide(color: primaryBlue)),
+      style: FilledButton.styleFrom(
+        fixedSize: const Size(90, 40),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      child: const Text('Share'),
     );
   }
 }

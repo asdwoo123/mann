@@ -19,11 +19,14 @@ class LogoutButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.logout),
+    return TextButton(
       onPressed: () {
         _logout(context);
       },
+      child: const Text('Logout', style: TextStyle(
+        color: Colors.black87,
+        fontSize: 14,
+      ),),
     );
   }
 }

@@ -21,7 +21,7 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   bool useMaterial3 = true;
   ThemeMode themeMode = ThemeMode.system;
-  ColorSeed colorSelected = ColorSeed.baseColor;
+  ColorSeed colorSelected = ColorSeed.green;
   ColorSelectionMethod colorSelectionMethod = ColorSelectionMethod.colorSeed;
 
   bool get useLightMode {
@@ -56,6 +56,7 @@ class _AppState extends State<App> {
       debugShowCheckedModeBanner: false,
       themeMode: themeMode,
       theme: ThemeData(
+        fontFamily: 'NotoSansCJKkr',
         colorSchemeSeed: colorSelected.color,
         useMaterial3: useLightMode,
         brightness: Brightness.light,

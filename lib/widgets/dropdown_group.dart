@@ -16,13 +16,16 @@ class DropdownGroup extends StatefulWidget {
   State<DropdownGroup> createState() => _DropdownGroupState();
 }
 
-class _DropdownGroupState extends State<DropdownGroup> {
+class _DropdownGroupState extends State<DropdownGroup> with AutomaticKeepAliveClientMixin {
   List<String> _branchOffices = [];
   List<String> _projectNames = [];
   List<String> _stationNames = [];
   String _selectBranchOffice = '';
   String _selectProjectName = '';
   String _selectStationName = '';
+
+  @override
+  bool get wantKeepAlive => true;
 
   void _getStationList() async {
     List<dynamic> stations = await getStationList();
@@ -58,8 +61,8 @@ class _DropdownGroupState extends State<DropdownGroup> {
 
   @override
   void initState() {
-    _getStationList();
     super.initState();
+    _getStationList();
   }
 
   @override
@@ -70,9 +73,7 @@ class _DropdownGroupState extends State<DropdownGroup> {
           items: _branchOffices,
           value: _selectBranchOffice,
           onChanged: (String? value) {
-            setState(() {
-              _selectBranchOffice = value!;
-            });
+            _selectBranchOffice = value!;
             _getStationList();
           },
         ),
@@ -80,9 +81,7 @@ class _DropdownGroupState extends State<DropdownGroup> {
           items: _projectNames,
           value: _selectProjectName,
           onChanged: (String? value) {
-            setState(() {
-              _selectProjectName = value!;
-            });
+            _selectProjectName = value!;
             _getStationList();
           },
         ),
@@ -91,9 +90,7 @@ class _DropdownGroupState extends State<DropdownGroup> {
           items: _stationNames,
           value: _selectStationName,
           onChanged: (String? value) {
-            setState(() {
-              _selectStationName = value!;
-            });
+            _selectStationName = value!;
             _getStationList();
           },
         ) : Container(),

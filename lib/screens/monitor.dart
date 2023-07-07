@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mann/constants.dart';
-import 'package:mann/utils/station.dart';
 import 'package:mann/widgets/custom_cardview.dart';
-import 'package:mann/widgets/custom_dropdown.dart';
 import 'package:mann/widgets/dropdown_group.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
@@ -29,12 +27,11 @@ class _MonitorScreenState extends State<MonitorScreen> {
     for (var stationJSON in stations) {
       Station station = Station.fromJson(stationJSON);
 
-      setState(() {
-        _stations.add(station);
-      });
+      _stations.add(station);
 
       await _connectSocket(station);
     }
+    setState(() {});
   }
 
   void _updateStationConnection(Station station, bool isConnected) {
@@ -99,16 +96,18 @@ class _MonitorScreenState extends State<MonitorScreen> {
   @override
   Widget build(BuildContext context) {
     return ListView(
-        children: [
+      children: [
       DropdownGroup(onChanged: _initStationConnection, projectUntil: true),
       const SizedBox(height: 20,),
       ListView.builder(
           shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
           itemCount: _stations.length,
           itemBuilder: (BuildContext ctx, int idx) {
             var station = _stations[idx];
             return CustomCardView(station: station);
-          })
+          }),
+          Container(height: 1200, decoration: const BoxDecoration(color: Colors.lightBlue),),
     ]);
   }
 }

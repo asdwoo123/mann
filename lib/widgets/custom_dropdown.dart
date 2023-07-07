@@ -16,8 +16,20 @@ class CustomDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return DropdownButtonHideUnderline(child: DropdownButton2(
+    return DropdownButtonHideUnderline(
+        child: DropdownButton2(
       isExpanded: true,
+      iconStyleData: const IconStyleData(
+          icon: Row(
+            children: [
+              Icon(
+                Icons.arrow_forward_ios_outlined,
+              ),
+              SizedBox(width: 16,)
+            ],
+          ),
+        iconSize: 14
+      ),
       value: value,
       items: items.map((String item) {
         return DropdownMenuItem<String>(
